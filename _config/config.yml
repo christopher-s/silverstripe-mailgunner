@@ -1,6 +1,6 @@
 ---
 Name: silverstripe-mailgun
 ---
-Injector:
-  Mailer:
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Control\Email\SwiftMailer:
     class: 'Kinglozzer\SilverStripeMailgunner\Mailer'

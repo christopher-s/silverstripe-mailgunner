@@ -2,16 +2,21 @@
 
 namespace Kinglozzer\SilverStripeMailgunner;
 
-use Debug;
+use SilverStripe\Dev\Debug;
 use Exception;
-use Mailer as SilverstripeMailer;
+use SilverStripe\Control\Email\SwiftMailer as SilverstripeMailer;
 use Mailgun\HttpClientConfigurator;
 use Mailgun\Mailgun;
 use Mailgun\Messages\BatchMessage;
 use Mailgun\Messages\MessageBuilder;
-use SS_Log;
-use SapphireTest;
+use SilverStripe\Dev\SapphireTest;
+use Psr\Log\LoggerInterface;
+use SilverStripe\Core\Injector\Injector;
 
+/**
+ * Class Mailer
+ * @package Kinglozzer\SilverStripeMailgunner
+ */
 class Mailer extends SilverstripeMailer
 {
     /**
@@ -135,10 +140,11 @@ class Mailer extends SilverstripeMailer
             $this->closeTempFileHandles();
             // Throwing the exception would break SilverStripe's Email API expectations, so we log
             // errors and show a message (which is hidden in live mode)
-            SS_Log::log('Mailgun error: ' . $e->getMessage(), SS_Log::ERR);
-            if (!SapphireTest::is_running_test()) {
-                Debug::message('Mailgun error: ' . $e->getMessage());
-            }
+
+            $logger = Injector::inst()->get(LoggerInterface::class)->error('Mailgun error: ' . $e->getMessage());
+//            if (!SapphireTest::is_running_test()) {
+//                Debug::message('Mailgun error: ' . $e->getMessage());
+//            }
 
             return false;
         }
